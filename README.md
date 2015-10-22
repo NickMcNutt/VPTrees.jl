@@ -1,3 +1,3 @@
-# VPTree
+# VantagePointTreess
 
-[![Build Status](https://travis-ci.org/NickMcNutt/VPTree.jl.svg?branch=master)](https://travis-ci.org/NickMcNutt/VPTree.jl)
+[![Build Status](https://travis-ci.org/NickMcNutt/VantagePointTrees.jl.svg?branch=master)](https://travis-ci.org/NickMcNutt/VantagePointTrees.jl)
