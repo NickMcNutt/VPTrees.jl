@@ -1,6 +1,6 @@
 import Distances.evaluate
 
-type PeriodicSqEuclidean{T<:AbstractFloat} <: Metric
+type PeriodicSqEuclidean{T<:AbstractFloat} <: Distances.Metric
     bw::T
 end
 
@@ -27,11 +27,11 @@ end
 immutable VPTree
     n::Int
     root::Node
-    metric::Metric
+    metric::Distances.Metric
     points::Any
 end
 
-function partition!{T<:Real}(metric::Metric, points, indices::AbstractVector{Int}, vp::Int, d::T, i::Int, j::Int)
+function partition!{T<:Real}(metric::Distances.Metric, points, indices::AbstractVector{Int}, vp::Int, d::T, i::Int, j::Int)
     while true
         @inbounds while evaluate(metric, points, vp, indices[i]) <= d
             i == j && return j
@@ -47,7 +47,7 @@ function partition!{T<:Real}(metric::Metric, points, indices::AbstractVector{Int
     end
 end
 
-function quickselect!(metric::Metric, points, indices::AbstractVector{Int}, vp::Int, i::Int, j::Int, k::Int)
+function quickselect!(metric::Distances.Metric, points, indices::AbstractVector{Int}, vp::Int, i::Int, j::Int, k::Int)
     while true
         # Choose a random element as the pivot
         r = rand(i:j)
@@ -57,7 +57,7 @@ function quickselect!(metric::Metric, points, indices::AbstractVector{Int}, vp::
     end
 end
 
-function Node(metric::Metric, points, indices::AbstractVector{Int}, i::Int, j::Int)
+function Node(metric::Distances.Metric, points, indices::AbstractVector{Int}, i::Int, j::Int)
     j <  i && return Node()
     @inbounds j == i && return Node(indices[i])
     #@inbounds j == i && return Node{T}(indices[i], i, j)
@@ -79,7 +79,7 @@ function Node(metric::Metric, points, indices::AbstractVector{Int}, i::Int, j::I
     #Node{T}(vp, i, j, d, left, right)
 end
 
-function VPTree(metric::Metric, points, indices::AbstractVector{Int})
+function VPTree(metric::Distances.Metric, points, indices::AbstractVector{Int})
     n = length(indices)
     root = Node(metric, points, indices, 1, n)
     VPTree(n, root, metric, points)
