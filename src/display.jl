@@ -21,8 +21,6 @@ end
 
 show(io::IO, node::Node, args...) = printnode(io, node, args...)
 display(node::Node) = show(node)
-writemime(io::IO, ::MIME"text/plain", node::Node, args...) = printnode(io, node, args...)
 
 show(io::IO, vptree::VPTree, args...) = show(io, vptree.root, args...)
 display(vptree::VPTree) = show(vptree.root)
-writemime(io::IO, ::MIME"text/plain", vptree::VPTree, args...) = writemime(io, MIME"text/plain"(), vptree.root, args...)
