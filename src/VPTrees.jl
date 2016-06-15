@@ -1,4 +1,4 @@
-module VantagePointTrees
+module VPTrees
 
 using Distances
 
