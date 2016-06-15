@@ -79,6 +79,11 @@ function Node(metric::Distances.Metric, points, indices::AbstractVector{Int}, i:
     #Node{T}(vp, i, j, d, left, right)
 end
 
+"""
+    VPTree(metric, points, indices)
+
+Construct a VPTree using the metric for the given points and indices
+"""
 function VPTree(metric::Distances.Metric, points, indices::AbstractVector{Int})
     n = length(indices)
     root = Node(metric, points, indices, 1, n)

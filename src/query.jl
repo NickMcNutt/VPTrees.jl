@@ -1,11 +1,7 @@
 # Is sqrt(x1) + sqrt(x2) >= sqrt(y)?
 function sumsqrtgt{T<:Real}(x1::T, x2::T, y::T)
     d = y - x1 - x2
-    if d > 0 && d^2 > 4*x1*x2
-        return false
-    else
-        return true
-    end
+    d <= 0 || d^2 <= 4*x1*x2
 end
 
 function initneighbors!{T<:Real}(nd::AbstractVector{T}, k::Int)

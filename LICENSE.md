@@ -1,4 +1,4 @@
-The VantagePointTrees.jl package is licensed under the MIT "Expat" License:
+The VPTrees.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2015: Nick McNutt.
 >
