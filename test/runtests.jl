@@ -1,4 +1,4 @@
-using VantagePointTree
+using VPTrees
 using Base.Test
 
 # write your own tests here
