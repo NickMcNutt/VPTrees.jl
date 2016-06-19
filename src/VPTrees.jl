@@ -5,8 +5,11 @@ export
     Node,
     VPTree,
 
-    # query.jl
+    # knn.jl
     knn!,
+
+    # rangesearch.jl
+    NeighborList,
     inrange!,
     inrange,
 
@@ -16,7 +19,8 @@ export
     display
 
 include("construct.jl")
-include("query.jl")
+include("knn.jl")
+include("rangesearch.jl")
 include("display.jl")
 
 end

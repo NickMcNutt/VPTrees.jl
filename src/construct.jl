@@ -89,5 +89,5 @@ function distsq(points::Matrix, i1::Int, i2::Int)
     y = points[2, i1] - points[2, i2]
     z = points[3, i1] - points[3, i2]
 
-    sqrt(x^2 + y^2 + z^2)
+    x^2 + y^2 + z^2
 end
