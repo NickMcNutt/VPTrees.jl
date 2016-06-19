@@ -1,13 +1,18 @@
+import Base: length, collect
+
 type NeighborList{T}
-    distances::Vector{T}
     indices::Vector{Int}
+    distances::Vector{T}
     length::Int
     max_length::Int
 
-    NeighborList(max_length::Int) = new(Vector{T}(max_length), Vector{Int}(max_length), 0, max_length)
+    NeighborList(max_length::Int) = new(Vector{Int}(max_length), Vector{T}(max_length), 0, max_length)
 end
 
+length(neighbors::NeighborList) = neighbors.length
 clear!(neighbors::NeighborList) = neighbors.length = 0
+indices(neighbors::NeighborList) = neighbors.indices[1:neighbors.length]
+distances(neighbors::NeighborList) = neighbors.distances[1:neighbors.length]
 
 # Is sqrt(x1) + sqrt(x2) >= sqrt(y)?
 @inline function sumsqrtgt{T}(x1::T, x2::T, y::T)
@@ -15,58 +20,89 @@ clear!(neighbors::NeighborList) = neighbors.length = 0
     d <= 0 || d^2 <= 4*x1*x2
 end
 
-@inline function add_neighbor!{T}(neighbors::NeighborList{T}, d::T, i::Int)
-    li = neighbors.length + 1
-    @inbounds neighbors.distances[li] = d
-    @inbounds neighbors.indices[li] = i
-    neighbors.length = li
+@inline function push_neighbor!{T}(neighbors::NeighborList{T}, index::Int, distance::T)
+    i = neighbors.length + 1
+    @inbounds neighbors.indices[i] = index
+    @inbounds neighbors.distances[i] = distance
+    neighbors.length = i
 end
 
-function add_neighbors!{T}(distance, neighbors::NeighborList{T}, point, points, node::Node{T})
-    i = node.index
-    i == 0 && return
+function push_neighbors!{T}(metric, neighbors::NeighborList{T}, node::Node{T}, point_index::Int)
+    node.index == 0 && return
+    node.index == point_index && return
 
-    d = distance(points, i, point)::T
-
-    add_neighbor!(neighbors, d, i)
+    d = metric(point_index, node.index)::T
+    push_neighbor!(neighbors, node.index, d)
 
     node.isleaf && return
 
-    add_neighbors!(distance, neighbors, point, points, node.inside)
-    add_neighbors!(distance, neighbors, point, points, node.outside)
+    push_neighbors!(metric, neighbors, node.inside, point_index)
+    push_neighbors!(metric, neighbors, node.outside, point_index)
 end
 
-function inrange!{T}(distance::Function, neighbors::NeighborList{T}, r::T, point, points, node::Node{T})
-    i = node.index
-    i == 0 && return
+function rangesearch!{T}(metric::Function, neighbors::NeighborList{T}, node::Node{T}, point_index::Int, r::T)
+    node.index == 0 && return
+    node.index == point_index && return
 
-    d = distance(points, i, point)::T
+    d = metric(point_index, node.index)::T
+    d <= r && push_neighbor!(neighbors, node.index, d)
 
-    d <= r && add_neighbor!(neighbors, d, i)
+    node.isleaf && return
+
+    μ = node.radius
+    if d + μ <= r
+        push_neighbors!(metric, neighbors, node.inside, point_index)
+    elseif d - μ <= r
+        rangesearch!(metric, neighbors, node.inside, point_index, r)
+    end
+
+    if μ - d <= r
+        rangesearch!(metric, neighbors, node.outside, point_index, r)
+    end
+end
+
+function rangesearch_sq!{T}(metric::Function, neighbors::NeighborList{T}, node::Node{T}, point_index::Int, r::T)
+    node.index == 0 && return
+    node.index == point_index && return
+
+    d = metric(point_index, node.index)::T
+    d <= r && push_neighbor!(neighbors, node.index, d)
 
     node.isleaf && return
 
     μ = node.radius
     # d + μ <= r
     if !sumsqrtgt(d, μ, r)
-        add_neighbors!(distance, neighbors, point, points, node.inside)
+        push_neighbors!(metric, neighbors, node.inside, point_index)
     # d - μ <= r
     elseif sumsqrtgt(r, μ, d)
-        inrange!(distance, neighbors, r, point, points, node.inside)
+        rangesearch_sq!(metric, neighbors, node.inside, point_index, r)
     end
 
     # μ - d <= r
     if sumsqrtgt(r, d, μ)
-        inrange!(distance, neighbors, r, point, points, node.outside)
+        rangesearch_sq!(metric, neighbors, node.outside, point_index, r)
     end
 end
 
-function inrange!{T}(distance::Function, neighbors::NeighborList{T}, tree::VPTree, r::T, point)
+function rangesearch!{T}(neighbors::NeighborList{T}, tree::VPTree, point_index::Int, r::T)
     clear!(neighbors)
-    inrange!(distance, neighbors, r, point, tree.points, tree.root)
+    rangesearch!(tree.metric, neighbors, tree.root, point_index, r)
 end
 
-function inrange{T}(distance::Function, tree::VPTree, r::T, point)
+function rangesearch_sq!{T}(neighbors::NeighborList{T}, tree::VPTree, point_index::Int, r::T)
+    clear!(neighbors)
+    rangesearch_sq!(tree.metric, neighbors, tree.root, point_index, r)
+end
+
+function rangesearch{T}(tree::VPTree, point_index::Int, r::T)
     neighbors = NeighborList{T}(tree.num_points)
-    inrange!(distance, neighbors, r, point, tree.points, tree.root)
+    rangesearch!(neighbors, tree, point_index, r)
+    return indices(neighbors), distances(neighbors)
+end
+
+function rangesearch_sq{T}(tree::VPTree, point_index::Int, r::T)
+    neighbors = NeighborList{T}(tree.num_points)
+    rangesearch_sq!(neighbors, tree, point_index, r)
+    return indices(neighbors), distances(neighbors)
 end

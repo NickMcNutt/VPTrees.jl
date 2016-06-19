@@ -7,11 +7,14 @@ export
 
     # knn.jl
     knn!,
+    knn_sq!,
 
     # rangesearch.jl
     NeighborList,
-    inrange!,
-    inrange,
+    rangesearch!,
+    rangesearch,
+    rangesearch_sq!,
+    rangesearch_sq,
 
     # display.jl
     printnode,
