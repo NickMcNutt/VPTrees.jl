@@ -5,12 +5,17 @@ export
     Node,
     VPTree,
 
+    # neighborlist.jl
+    NeighborList,
+    length,
+    indices,
+    distances,
+
     # knn.jl
     knn!,
     knn_sq!,
 
     # rangesearch.jl
-    NeighborList,
     rangesearch!,
     rangesearch,
     rangesearch_sq!,
@@ -22,6 +27,7 @@ export
     display
 
 include("construct.jl")
+include("neighborlist.jl")
 include("knn.jl")
 include("rangesearch.jl")
 include("display.jl")
