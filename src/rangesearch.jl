@@ -44,21 +44,21 @@ end
 function rangesearch!{T}(neighbors::NeighborList{T}, tree::VPTree, point_index::Int, r::T)
     clear!(neighbors)
     rangesearch!(tree.metric, neighbors, tree.root, point_index, r)
+    return neighbors
 end
 
 function rangesearch_sq!{T}(neighbors::NeighborList{T}, tree::VPTree, point_index::Int, r::T)
     clear!(neighbors)
     rangesearch_sq!(tree.metric, neighbors, tree.root, point_index, r)
+    return neighbors
 end
 
 function rangesearch{T}(tree::VPTree, point_index::Int, r::T)
     neighbors = NeighborList{T}(tree.num_points)
     rangesearch!(neighbors, tree, point_index, r)
-    return indices(neighbors), distances(neighbors)
 end
 
 function rangesearch_sq{T}(tree::VPTree, point_index::Int, r::T)
     neighbors = NeighborList{T}(tree.num_points)
     rangesearch_sq!(neighbors, tree, point_index, r)
-    return indices(neighbors), distances(neighbors)
 end
