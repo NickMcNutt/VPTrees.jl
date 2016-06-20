@@ -31,6 +31,7 @@ Pkg.clone("https://github.com/NickMcNutt/VPTrees.jl")
 ## Examples
 
 ```julia
+using VPTrees
 
 # Create some points in 3D space
 n = 100000
