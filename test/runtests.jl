@@ -21,36 +21,29 @@ end
 
 checkintegrity{T<:Real}(tree::VPTree{T}, indices::Vector{Int}) = checkintegrity(tree, tree.root, indices)==#
 
-function distance_sq_ii(points::Matrix, i1::Int, i2::Int)
-    @inbounds x = points[1, i1] - points[1, i2]
-    @inbounds y = points[2, i1] - points[2, i2]
-    @inbounds z = points[3, i1] - points[3, i2]
+#function exact_rangesearch(metric::
+
+
+create_metric(distance::Function, points) = (i::Int, j::Int) -> distance(points, i, j)
+
+function euclidean_sq(points::Matrix, i::Int, j::Int)
+    x = points[1, i] - points[1, j]
+    y = points[2, i] - points[2, j]
+    z = points[3, i] - points[3, j]
 
     x^2 + y^2 + z^2
 end
 
-function distance_sq_ip{T}(points::Matrix{T}, i::Int, point::NTuple{3, T})
-    @inbounds x = points[1, i] - point[1]
-    @inbounds y = points[2, i] - point[2]
-    @inbounds z = points[3, i] - point[3]
+euclidean(points::Matrix, i::Int, j::Int) = sqrt(euclidean_sq(points, i, j))
 
-    x^2 + y^2 + z^2
+function test_rangesearch(distance::Function, n::Int)
+    points = randn(3, n)
+    indices = collect(1:n)
+    metric = create_metric(distance, points)
+
+    @time tree = VPTree(metric, indices)
+    @time rangesearch(tree, 1, 1.0)
 end
 
-function inrange_test(n::Int)
-    points = 10*rand(3, n) - 5
-    ind = collect(1:n)
-
-    @time tree = VPTree(distance_sq_ii, points, ind)
-    neighbors = NeighborList{Float64}(n)
-    @time inrange!(distance_sq_ip, neighbors, tree, 1.0, (0.0, 0.0, 0.0))
-
-    @time for i in 1:n
-        inrange!(distance_sq_ip, neighbors, tree, 1.0, (points[1, i], points[2, i], points[3, i]))
-    end
-
-    neighbors
-end
-
-inrange_test(100000)
-inrange_test(100000)
+test_rangesearch(euclidean, 100000)
+test_rangesearch(euclidean, 100000)
