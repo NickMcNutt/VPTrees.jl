@@ -41,6 +41,13 @@ function rangesearch_sq!{T}(metric::Function, neighbors::NeighborList{T}, node::
     end
 end
 
+# Searches using a possible *new* metric
+function rangesearch!{T}(metric::Function, neighbors::NeighborList{T}, tree::VPTree, point_index::Int, r::T)
+    clear!(neighbors)
+    rangesearch!(metric, neighbors, tree.root, point_index, r)
+    return neighbors
+end
+
 function rangesearch!{T}(neighbors::NeighborList{T}, tree::VPTree, point_index::Int, r::T)
     clear!(neighbors)
     rangesearch!(tree.metric, neighbors, tree.root, point_index, r)
