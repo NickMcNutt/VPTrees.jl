@@ -1,7 +1,7 @@
 function rangesearch!{T}(metric::Function, neighbors::NeighborList{T}, node::Node{T}, point_index::Int, r::T)
     node.index == 0 && return
 
-    d = metric(point_index, node.index)::T
+    d = metric(node.index, point_index)::T
     d <= r && add_neighbor!(neighbors, node.index, d)
 
     node.isleaf && return
@@ -21,7 +21,7 @@ end
 function rangesearch_sq!{T}(metric::Function, neighbors::NeighborList{T}, node::Node{T}, point_index::Int, r::T)
     node.index == 0 && return
 
-    d = metric(point_index, node.index)::T
+    d = metric(node.index, point_index)::T
     d <= r && add_neighbor!(neighbors, node.index, d)
 
     node.isleaf && return

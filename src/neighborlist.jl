@@ -54,10 +54,12 @@ end
 function add_neighbors!{T}(metric, neighbors::NeighborList{T}, node::Node{T}, point_index::Int)
     node.index == 0 && return
 
-    if node.index != point_index
-        d = metric(point_index, node.index)::T
+    #if node.index != point_index
+        d = metric(node.index, point_index)::T
+    if d < 0.001
         add_neighbor!(neighbors, node.index, d)
     end
+    #end
 
     node.isleaf && return
 
