@@ -1,9 +1,9 @@
 function knn!{T}(metric::Function, neighbors::NeighborList{T}, node::Node{T}, point_index::Int, τ::T)
     node.index == 0 && return τ
 
-    d = metric(point_index, node.index)::T
+    d = metric(node.index, point_index)::T
     
-    if d < τ && node.index != point_index
+    if d < τ && d > 0.0001#&& node.index != point_index
         τ = insert_neighbor!(neighbors, node.index, d)
     end
 
