@@ -1,4 +1,4 @@
-import Base: length, collect
+import Base: show, display, length, collect, indices
 
 type NeighborList{T}
     indices::Vector{Int}
@@ -12,6 +12,18 @@ end
 length(neighbors::NeighborList) = neighbors.length
 indices(neighbors::NeighborList) = neighbors.indices[1:neighbors.length]
 distances(neighbors::NeighborList) = neighbors.distances[1:neighbors.length]
+
+function show(io::IO, neighbors::NeighborList)
+    for i in 1:neighbors.length
+        @printf(io, "%-10d%.4f\n", neighbors.indices[i], neighbors.distances[i])
+    end
+
+    for i in 1:neighbors.max_length-neighbors.length
+        @printf(io, "*\n")
+    end
+end
+
+display(neighbors::NeighborList) = show(neighbors)
 
 clear!(neighbors::NeighborList) = neighbors.length = 0
 
@@ -39,7 +51,7 @@ function insert_neighbor!{T}(neighbors::NeighborList{T}, index::Int, distance::T
     @inbounds ni[j] = index
     @inbounds nd[j] = distance
 
-    @inbounds τ = nd[k]
+    @inbounds τ = k == neighbors.max_length ? nd[k] : T(Inf)
 
     return τ
 end
@@ -55,11 +67,10 @@ function add_neighbors!{T}(metric, neighbors::NeighborList{T}, node::Node{T}, po
     node.index == 0 && return
 
     #if node.index != point_index
-        d = metric(node.index, point_index)::T
-    if d < 0.001
-        add_neighbor!(neighbors, node.index, d)
-    end
-    #end
+    #if d > 0.001
+
+    d = metric(node.index, point_index)::T
+    add_neighbor!(neighbors, node.index, d)
 
     node.isleaf && return
 
