@@ -12,7 +12,7 @@ function printnode(io::IO, node::Node, maxdepth::Int = 4, depth::Int = 0)
     elseif depth == maxdepth
         println(io, tab, "...")
     else
-        @printf(io, "%s%d, %#-.1f\n", tab, node.index, sqrt(node.radius))
+        @printf(io, "%s%d, %#-.1f\n", tab, node.index, node.radius)
         #@printf(io, "%s[%d, %d], %d, %#-.1f\n", tab, node.i, node.j, node.index, sqrt(node.radius))
         printnode(io, node.inside, maxdepth, depth + 1)
         printnode(io, node.outside, maxdepth, depth + 1)
