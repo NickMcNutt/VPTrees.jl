@@ -5,11 +5,11 @@ immutable Node{T}
     inside::Node{T}
     outside::Node{T}
 
-    Node() = new(true, zero(Int))
-    Node(k::Int) = new(true, k)
-    Node(k::Int, d::T, l::Node{T}, r::Node{T}) = new(false, k, d, l, r)
+    Node{T}() where T = new(true, zero(Int))
+    Node{T}(k::Int) where T = new(true, k)
+    Node{T}(k::Int, d::T, l::Node{T}, r::Node{T}) where T = new(false, k, d, l, r)
 
-    function Node(metric::Function, indices::Vector{Int}, i::Int, j::Int)
+    function Node{T}(metric::Function, indices::Vector{Int}, i::Int, j::Int) where T
         j <  i && return Node{T}()
         @inbounds j == i && return Node{T}(indices[i])
 

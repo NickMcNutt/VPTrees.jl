@@ -6,7 +6,7 @@ type NeighborList{T}
     length::Int
     max_length::Int
 
-    NeighborList(max_length::Int) = new(Vector{Int}(max_length), Vector{T}(max_length), 0, max_length)
+    NeighborList{T}(max_length::Int) where T = new(Vector{Int}(max_length), Vector{T}(max_length), 0, max_length)
 end
 
 length(neighbors::NeighborList) = neighbors.length
