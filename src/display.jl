@@ -1,4 +1,4 @@
-import Base.show, Base.display, Base.writemime
+import Base.show, Base.display
 
 function printnode(io::IO, node::Node, maxdepth::Int = 4, depth::Int = 0)
     junction = ifelse(depth > 0, "├", "┌")
